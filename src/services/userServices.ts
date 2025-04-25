@@ -1,6 +1,6 @@
 import { userModel } from "../models/userModel";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 interface RegisterParam {
   firstName: string;
   lastName: string;
@@ -23,7 +23,7 @@ export const register = async ({
 
   await newUser.save();
 
-  return { data: generateJwt({firstName,lastName,email}), statusCode: 200 };
+  return { data: generateJwt({ firstName, lastName, email }), statusCode: 200 };
 };
 
 interface Login {
@@ -37,14 +37,23 @@ export const login = async ({ email, password }: Login) => {
   if (!findUser)
     return { data: "incorrect email or password", statusCode: 400 };
 
-  const passwordMatch =await bcrypt.compare(password, findUser.password);
+  const passwordMatch = await bcrypt.compare(password, findUser.password);
   if (!passwordMatch)
     return { data: "incorrect email or password", statusCode: 400 };
- 
-  return {data:generateJwt({firstName:findUser.firstName,lastName:findUser.lastName,email}),statusCode:200}
+
+  return {
+    data: generateJwt({
+      firstName: findUser.firstName,
+      lastName: findUser.lastName,
+      email,
+    }),
+    statusCode: 200,
+  };
 };
 
-
-const generateJwt=(data:any)=>{
-  return jwt.sign(data,'QbMx!h;caF|rxlT:8bN>&^qi-;q=n*{=)OVrh~zEn/|JViMy0L1xqM25WMbU^X(')
-}
+const generateJwt = (data: any) => {
+  return jwt.sign(
+    data,
+    "QbMx!h;caF|rxlT:8bN>&^qi-;q=n*{=)OVrh~zEn/|JViMy0L1xqM25WMbU^X("
+  );
+};
