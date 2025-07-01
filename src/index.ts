@@ -20,7 +20,7 @@ setIntialseed();
 
 app.use("/products", ProductRoute);
 app.use("/user", userRoute);
-app.use("/cart",cartRoute)
+app.use("/cart", cartRoute);
 app.listen(PORT, () => {
   console.log(`server running on port ${PORT}`);
 });

@@ -1,15 +1,12 @@
-import express,{Request} from "express";
-import { getActiveCartForUser ,addItemtocart} from "../services/CartServices";
+import express, { Request } from "express";
+import { getActiveCartForUser, addItemtocart } from "../services/CartServices";
 import JwtValidator from "../middlewares/validateJWT";
 
-  interface ERequest extends Request {
-      user?: any;
-  }
-
-
+interface ERequest extends Request {
+  user?: any;
+}
 
 const router = express.Router();
-
 
 router.get("/", JwtValidator, async (req: ERequest, res) => {
   if (!req.user) {
@@ -23,11 +20,10 @@ router.get("/", JwtValidator, async (req: ERequest, res) => {
 });
 
 router.post("/items", JwtValidator, async (req: ERequest, res) => {
-  const userID=req.user._id
-  const {productID,quantity}=req.body
-  const response = await addItemtocart({ userID, productID, quantity })
-  res.send(response.data).status(response.statusCode)
-  
-})
+  const userID = req.user._id;
+  const { productID, quantity } = req.body;
+  const response = await addItemtocart({ userID, productID, quantity });
+  res.send(response.data).status(response.statusCode);
+});
 
 export default router;
