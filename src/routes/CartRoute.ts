@@ -1,5 +1,9 @@
 import express, { Request } from "express";
-import { getActiveCartForUser, addItemtocart } from "../services/CartServices";
+import {
+  getActiveCartForUser,
+  addItemtocart,
+  updateItemIncart,
+} from "../services/CartServices";
 import JwtValidator from "../middlewares/validateJWT";
 
 interface ERequest extends Request {
@@ -23,6 +27,13 @@ router.post("/items", JwtValidator, async (req: ERequest, res) => {
   const userID = req.user._id;
   const { productID, quantity } = req.body;
   const response = await addItemtocart({ userID, productID, quantity });
+  res.send(response.data).status(response.statusCode);
+});
+
+router.patch("/items", JwtValidator, async (req: ERequest, res) => {
+  const userID = req.user._id;
+  const { productID, quantity } = req.body;
+  const response = await updateItemIncart({ userID, productID, quantity });
   res.send(response.data).status(response.statusCode);
 });
 
