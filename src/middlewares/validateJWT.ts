@@ -21,8 +21,7 @@ const JwtValidator = (
     return;
   }
   Jwt.verify(
-    token,
-    "QbMx!h;caF|rxlT:8bN>&^qi-;q=n*{=)OVrh~zEn/|JViMy0L1xqM25WMbU^X(",
+    token,process.env.JWT_SECRET||"",
     async (err, payload) => {
       if (err) {
         res.status(403).send("invalid token ");

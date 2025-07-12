@@ -1,14 +1,16 @@
+import dotenv from "dotenv"
 import express from "express";
 import mongoose from "mongoose";
 import userRoute from "./routes/usersRoute";
 import ProductRoute from "./routes/ProductsRoute";
 import cartRoute from "./routes/CartRoute";
 import { setIntialseed } from "./services/ProductServices";
+dotenv.config();
 const app = express();
 const PORT = 3000;
 app.use(express.json());
 mongoose
-  .connect(`mongodb://localhost:27017/ecommerce`)
+  .connect(process.env.DB_URL||"")
   .then(() => {
     console.log("connection Success");
   })
