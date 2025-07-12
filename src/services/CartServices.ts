@@ -29,7 +29,8 @@ interface clearCart {
   userID: string;
 }
 
-const clearCart = async ({ userID }: clearCart) => {
+export const clearCart = async ({ userID }: clearCart) => {
+  console.log(userID)
   const cart = await getActiveCartForUser({ userID });
 
   cart.items = [];

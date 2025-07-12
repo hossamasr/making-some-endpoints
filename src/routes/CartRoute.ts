@@ -26,8 +26,8 @@ router.get("/", JwtValidator, async (req: ERequest, res) => {
 });
 
 router.delete("/", JwtValidator, async (req: ERequest, res) => {
-  const userId = req.user._id
-  const response = await clearCart({ userId } );
+  const userID = req.user._id;
+  const response = await clearCart({ userID });
    res.send(response.data).status(response.statusCode);
   
   
