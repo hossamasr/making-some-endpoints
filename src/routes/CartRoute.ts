@@ -5,6 +5,7 @@ import {
   updateItemIncart,
   deleteItemIcart,
   clearCart,
+  checkOut,
 } from "../services/CartServices";
 import JwtValidator from "../middlewares/validateJWT";
 
@@ -28,10 +29,8 @@ router.get("/", JwtValidator, async (req: ERequest, res) => {
 router.delete("/", JwtValidator, async (req: ERequest, res) => {
   const userID = req.user._id;
   const response = await clearCart({ userID });
-   res.send(response.data).status(response.statusCode);
-  
-  
-})
+  res.send(response.data).status(response.statusCode);
+});
 router.post("/items", JwtValidator, async (req: ERequest, res) => {
   const userID = req.user._id;
   const { productID, quantity } = req.body;
@@ -50,6 +49,13 @@ router.delete("/items/:productID", JwtValidator, async (req: ERequest, res) => {
   const userID = req.user._id;
   const productID = req.params.productID;
   const response = await deleteItemIcart({ userID, productID });
+  res.send(response.data).status(response.statusCode);
+});
+
+router.post("/checkout", JwtValidator, async (req: ERequest, res) => {
+  const userID = req.user._id;
+  const { address } = req.body;
+  const response = await checkOut({ userID, address });
   res.send(response.data).status(response.statusCode);
 });
 export default router;

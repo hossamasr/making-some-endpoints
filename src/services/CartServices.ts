@@ -1,5 +1,6 @@
 import { CartModel, ICartItem } from "../models/CartModel";
 import { productModel } from "../models/ProductModel";
+import { orderModel, IorderItem, Iorder } from "../models/orderModel";
 
 interface CreateCartForUser {
   userID: string;
@@ -30,7 +31,7 @@ interface clearCart {
 }
 
 export const clearCart = async ({ userID }: clearCart) => {
-  console.log(userID)
+  console.log(userID);
   const cart = await getActiveCartForUser({ userID });
 
   cart.items = [];
@@ -125,7 +126,7 @@ export const deleteItemIcart = async ({
   productID,
 }: deleteItemIcart) => {
   const cart = await getActiveCartForUser({ userID });
-  console.log( productID )
+  console.log(productID);
   // product not found
   const existIncart = cart?.items.find((p) => {
     return p.product._id?.toString() === productID;
@@ -153,3 +154,37 @@ const calculateCartTotalitems = (cart: ICartItem[]) => {
   return total;
 };
 
+interface checkOut {
+  userID: string;
+  address: string;
+}
+export const checkOut = async ({ userID, address }: checkOut) => {
+  const cart = await getActiveCartForUser({ userID });
+  const orderItems: IorderItem[] = [];
+  for (let item of cart.items) {
+    const product = await productModel.findById(item.product._id);
+    if (!product) {
+      return { data: "product not found", statusCode: 400 };
+    }
+    const orderItem: IorderItem = {
+      productTitle: product.title,
+      ProductImage: product.image,
+      unitPrice: item.unitPrice,
+      quantity: item.quantity,
+    };
+    orderItems.push(orderItem);
+  }
+
+  const order = await orderModel.create({
+    items: orderItems,
+    totalPrice: cart.totalPrice,
+    address: address,
+    userID: userID,
+  });
+
+  (await order).save();
+
+  cart.status = "completed";
+  await cart.save();
+  return { data: order, statusCode: 200 };
+};
