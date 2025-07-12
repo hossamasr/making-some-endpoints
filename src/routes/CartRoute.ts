@@ -3,6 +3,8 @@ import {
   getActiveCartForUser,
   addItemtocart,
   updateItemIncart,
+  deleteItemIcart,
+  clearCart,
 } from "../services/CartServices";
 import JwtValidator from "../middlewares/validateJWT";
 
@@ -23,6 +25,13 @@ router.get("/", JwtValidator, async (req: ERequest, res) => {
   return;
 });
 
+router.delete("/", JwtValidator, async (req: ERequest, res) => {
+  const userId = req.user._id
+  const response = await clearCart({ userId } );
+   res.send(response.data).status(response.statusCode);
+  
+  
+})
 router.post("/items", JwtValidator, async (req: ERequest, res) => {
   const userID = req.user._id;
   const { productID, quantity } = req.body;
@@ -37,4 +46,10 @@ router.patch("/items", JwtValidator, async (req: ERequest, res) => {
   res.send(response.data).status(response.statusCode);
 });
 
+router.delete("/items/:productID", JwtValidator, async (req: ERequest, res) => {
+  const userID = req.user._id;
+  const productID = req.params.productID;
+  const response = await deleteItemIcart({ userID, productID });
+  res.send(response.data).status(response.statusCode);
+});
 export default router;

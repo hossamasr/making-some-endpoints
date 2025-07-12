@@ -1,4 +1,4 @@
-import { CartModel } from "../models/CartModel";
+import { CartModel, ICartItem } from "../models/CartModel";
 import { productModel } from "../models/ProductModel";
 
 interface CreateCartForUser {
@@ -25,7 +25,19 @@ export const getActiveCartForUser = async ({
 
   return cart;
 };
+interface clearCart {
+  userID: string;
+}
 
+const clearCart = async ({ userID }: clearCart) => {
+  const cart = await getActiveCartForUser({ userID });
+
+  cart.items = [];
+  cart.totalPrice = 0;
+
+  const updatedcart = await cart?.save();
+  return { data: updatedcart, statusCode: 201 };
+};
 interface AddItemtoCart {
   userID: string;
   productID: string;
@@ -92,10 +104,7 @@ export const updateItemIncart = async ({
   const otherCartItems = cart.items.filter((p) => {
     return p.product._id?.toString() !== productID;
   });
-  let total = otherCartItems.reduce((sum, product) => {
-    sum += product.quantity * product.unitPrice;
-    return sum;
-  }, 0);
+  let total = calculateCartTotalitems(otherCartItems);
 
   existIncart.quantity = quantity;
   total += existIncart.quantity * existIncart.unitPrice;
@@ -104,3 +113,42 @@ export const updateItemIncart = async ({
   const updatedcart = await cart?.save();
   return { data: updatedcart, statusCode: 201 };
 };
+
+interface deleteItemIcart {
+  userID: string;
+  productID: any;
+}
+
+export const deleteItemIcart = async ({
+  userID,
+  productID,
+}: deleteItemIcart) => {
+  const cart = await getActiveCartForUser({ userID });
+  console.log( productID )
+  // product not found
+  const existIncart = cart?.items.find((p) => {
+    return p.product._id?.toString() === productID;
+  });
+  if (!existIncart) {
+    return { data: "item not exist", statusCode: 400 };
+  }
+  const otherCartItems = cart.items.filter((p) => {
+    return p.product._id?.toString() !== productID;
+  });
+
+  let total = calculateCartTotalitems(otherCartItems);
+
+  cart.items = otherCartItems;
+  cart.totalPrice = total;
+  const updatedcart = await cart?.save();
+  return { data: updatedcart, statusCode: 201 };
+};
+
+const calculateCartTotalitems = (cart: ICartItem[]) => {
+  const total = cart.reduce((sum, product) => {
+    sum += product.quantity * product.unitPrice;
+    return sum;
+  }, 0);
+  return total;
+};
+
