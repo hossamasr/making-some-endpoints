@@ -5,18 +5,18 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-interface Props{
-    _id:string
+interface Props {
+    _id: string
     name: string
     image: string
-    price:string
+    price: string
 }
 
-export default function ProductCard({name,image,price }:Props) {
+export default function ProductCard({ name, image, price }: Props) {
     return (
         <Card>
             <CardMedia
-                sx={{ height:240 }}
+                sx={{ height: 240 }}
                 image={image}
                 title={name}
             />
