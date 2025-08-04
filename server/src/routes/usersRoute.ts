@@ -14,7 +14,7 @@ router.post("/register", async (req, res) => {
       email,
       password: hashed_password,
     });
-    res.status(result.statusCode).send(result.data);
+    res.status(result.statusCode).json(result.data);
   } catch (err) {
     res.send("something went wrong!").status(500);
   }
@@ -24,7 +24,7 @@ router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const result = await login({ email, password });
-    res.status(result.statusCode).send(result.data);
+    res.status(result.statusCode).json(result.data);
   } catch (err) {
     res.send("something went wrong!").status(500);
   }
