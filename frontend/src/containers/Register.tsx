@@ -1,6 +1,7 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
 import { useRef, useState } from "react";
 import { BASE_URL } from "../constants/baseUrl";
+import { useAuth } from "../../context/Auth/AuthContext";
 
 
 
@@ -13,11 +14,18 @@ const Registe = () => {
   const emailRef = useRef<HTMLInputElement>(null)
   const passRef = useRef<HTMLInputElement>(null)
 
+  const auth = useAuth()
+
+
   const onSubmit = async () => {
     const firstName = rnameRef.current?.value;
     const lastName = lnameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passRef.current?.value;
+    if (!firstName || !lastName || !email || !password) {
+      setError("check your data")
+      return;
+    }
     const response = await fetch(`${BASE_URL}/user/register`, {
       method: "POST",
       headers: {
@@ -31,13 +39,19 @@ const Registe = () => {
 
     })
     if (!response.ok) {
-      setError("Please try different credntials")
+      setError("Please try different credentials")
       return;
 
     }
 
-    const data = await response.json()
-    console.log(data);
+    const token = await response.json()
+    if (!token) {
+      setError("something went wrong data are emp")
+      return;
+    }
+
+    auth?.login(email, password)
+    console.log(token);
 
   }
 
