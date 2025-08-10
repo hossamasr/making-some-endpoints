@@ -5,12 +5,8 @@ import { useAuth } from "../Auth/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 
-
-
-const Register = () => {
+const Login = () => {
   const [error, setError] = useState("")
-  const rnameRef = useRef<HTMLInputElement>(null)
-  const lnameRef = useRef<HTMLInputElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const passRef = useRef<HTMLInputElement>(null)
 
@@ -18,22 +14,20 @@ const Register = () => {
   const navigate = useNavigate()
 
   const onSubmit = async () => {
-    const firstName = rnameRef.current?.value;
-    const lastName = lnameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passRef.current?.value;
-    if (!firstName || !lastName || !email || !password) {
+    if (!email || !password) {
       setError("check your data")
       return;
     }
-    const response = await fetch(`${BASE_URL}/user/register`, {
+    const response = await fetch(`${BASE_URL}/user/login`, {
       method: "POST",
       headers: {
         "Content-type": "application/json"
       },
       body: JSON.stringify({
 
-        firstName, lastName, email, password
+        email, password
 
       })
 
@@ -50,22 +44,21 @@ const Register = () => {
       return;
     }
 
-    auth?.login(email, token)
+    auth?.login(email, password)
     console.log(token);
     navigate('/')
+
   }
 
 
   return (
     <Container>
       <Box sx={{ display: "flex", alignItems: "center", mt: 3, justifyContent: "center", flexDirection: "column" }}>
-        <Typography variant="h6">Register New Account</Typography>
+        <Typography variant="h6">Login to Your Account</Typography>
         <Box sx={{ mt: 2, display: "flex", flexDirection: "column", border: 1, padding: 2, borderColor: "#f5f5f5", gap: 2 }}>
-          <TextField inputRef={rnameRef} name="fName" label="first Name"> </TextField>
-          <TextField inputRef={lnameRef} name="lName" label="last Name"> </TextField>
           <TextField inputRef={emailRef} name="email" label="Email"> </TextField>
           <TextField inputRef={passRef} name="password" type="password" label="Password"> </TextField>
-          <Button onClick={onSubmit} variant="contained">Register</Button>
+          <Button onClick={onSubmit} variant="contained">Login</Button>
           {error && <Typography sx={{ color: "red" }}>{error}</Typography>}
         </Box>
 
@@ -75,4 +68,4 @@ const Register = () => {
     </Container>
   )
 }
-export default Register;
+export default Login;
