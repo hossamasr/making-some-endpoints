@@ -40,8 +40,7 @@ const Login = () => {
       return;
     }
 
-    auth?.login(email, password);
-    console.log(token);
+    auth?.login(email, token);
     navigate("/");
   };
 
